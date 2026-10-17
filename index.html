@@ -1,1 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>CONSTRUCTION EXCEL SHEET</title>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  color: #222;
+}
+
+header {
+  background: #172b4d;
+  color: white;
+  text-align: center;
+  padding: 35px 15px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+header p {
+  font-size: 15px;
+}
+
+.hero {
+  text-align: center;
+  padding: 35px 15px;
+  background: white;
+}
+
+.hero h2 {
+  color: #172b4d;
+  font-size: 26px;
+}
+
+.hero p {
+  line-height: 1.7;
+}
+
+.container {
+  max-width: 850px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px #00000012;
+}
+
+.card h2 {
+  color: #172b4d;
+}
+
+.sheet {
+  padding: 12px;
+  margin: 7px 0;
+  background: #f0f3f8;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.price {
+  font-size: 38px;
+  color: #168345;
+  font-weight: bold;
+  text-align: center;
+}
+
+.buy {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: #168345;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.buy:disabled {
+  background: #888;
+}
+
+.note {
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+}
+
+#message {
+  text-align: center;
+  padding: 15px;
+  font-weight: bold;
+}
+
+footer {
+  background: #172b4d;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>CONSTRUCTION EXCEL SHEET</h1>
+  <p>Professional Construction Calculations Made Easy</p>
+</header>
+
+<section class="hero">
+  <h2>15 Powerful Construction Excel Calculators</h2>
+
+  <p>
+    Simplify your construction calculations.<br>
+    Save time, reduce manual calculations and improve accuracy.
+  </p>
+</section>
+
+<div class="container">
+
+<div class="card">
+<h2>Included Excel Sheets</h2>
+
+<div class="sheet">01. Concrete Quantity – Column</div>
+<div class="sheet">02. Concrete Quantity – Footing</div>
+<div class="sheet">03. Concrete Quantity – Slab</div>
+<div class="sheet">04. Concrete Quantity – Beam</div>
+<div class="sheet">05. Steel Quantity – Beam</div>
+<div class="sheet">06. Steel Quantity – Column</div>
+<div class="sheet">07. Steel Quantity – Footing</div>
+<div class="sheet">08. Steel Quantity – Slab</div>
+<div class="sheet">09. Material Quantity of Building</div>
+<div class="sheet">10. Painting Quantity</div>
+<div class="sheet">11. Plastering Quantity</div>
+<div class="sheet">12. Total Plaster and Painting Quantity</div>
+<div class="sheet">13. Total Cost of Building</div>
+<div class="sheet">14. Total Tile Quantity</div>
+<div class="sheet">15. Brickwork Quantity</div>
+
+</div>
+
+<div class="card">
+
+<h2 style="text-align:center">Lifetime Access</h2>
+
+<div class="price">₹999</div>
+
+<p class="note">One-time payment • No subscription</p>
+
+<button class="buy" id="buyButton" onclick="buyNow()">
+BUY NOW – ₹999
+</button>
+
+<div id="message"></div>
+
+</div>
+
+<div class="card">
+<h2>Why Choose These Sheets?</h2>
+
+<p>✓ 15 useful construction calculators</p>
+<p>✓ Easy-to-use Excel format</p>
+<p>✓ Save calculation time</p>
+<p>✓ Useful for engineers and architects</p>
+<p>✓ One-time payment</p>
+</div>
+
+</div>
+
+<footer>
+<p>CONSTRUCTION EXCEL SHEET</p>
+<p>Construction Calculator for Engineers and Architects</p>
+</footer>
+
+<script>
+
+const API = "https://construction-excel-sheet-backend.onrender.com";
+
+async function buyNow() {
+
+  const button = document.getElementById("buyButton");
+  const message = document.getElementById("message");
+
+  if (!window.Razorpay) {
+    message.innerText = "Payment service is unavailable. Please refresh.";
+    return;
+  }
+
+  button.disabled = true;
+  message.innerText = "Connecting to payment server...";
+
+  try {
+
+    const orderResponse = await fetch(API + "/create-order", {
+      method: "POST"
+    });
+
+    if (!orderResponse.ok) {
+      throw new Error("Could not create payment order");
+    }
+
+    const order = await orderResponse.json();
+
+    const options = {
+      key: order.keyId,
+      amount: order.amount,
+      currency: order.currency,
+      name: "CONSTRUCTION EXCEL SHEET",
+      description: "15 Construction Excel Calculators",
+      order_id: order.orderId,
+
+      handler: async function(response) {
+
+        message.innerText = "Verifying payment...";
+
+        try {
+
+          const verifyResponse = await fetch(
+            API + "/verify-payment",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(response)
+            }
+          );
+
+          const result = await verifyResponse.json();
+
+          if (!verifyResponse.ok || !result.success) {
+            throw new Error("Payment verification failed");
+          }
+
+          message.innerText =
+            "Payment successful! Your download is ready.";
+
+          const download = document.createElement("a");
+
+          download.href = API + "/download?token=" +
+            encodeURIComponent(result.downloadToken);
+
+          download.innerText = "DOWNLOAD YOUR EXCEL SHEETS ZIP";
+
+          download.style.display = "block";
+          download.style.margin = "20px auto";
+          download.style.padding = "16px";
+          download.style.background = "#168345";
+          download.style.color = "white";
+          download.style.textAlign = "center";
+          download.style.borderRadius = "8px";
+          download.style.textDecoration = "none";
+
+          message.appendChild(download);
+
+        } catch(error) {
+          message.innerText =
+            "Payment verification failed. Contact support before paying again.";
+        }
+
+        button.disabled = false;
+      },
+
+      modal: {
+        ondismiss: function() {
+          message.innerText = "Payment cancelled.";
+          button.disabled = false;
+        }
+      },
+
+      theme: {
+        color: "#172b4d"
+      }
+    };
+
+    const payment = new Razorpay(options);
+
+    payment.on("payment.failed", function() {
+      message.innerText = "Payment failed. Please try again.";
+      button.disabled = false;
+    });
+
+    payment.open();
+
+  } catch(error) {
+
+    message.innerText =
+      "Unable to connect. Please try again later.";
+
+    button.disabled = false;
+  }
+}
+
+</script>
+
+</body>
+</html>
